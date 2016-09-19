@@ -1,0 +1,92 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+  	$( "#get_cash" ).click(function() {
+  		$.post("get_coins", { sum: $( "input[name='sum']" ).val() },
+      	function(result) { 
+      		var parsed_result = jQuery.parseJSON(result);
+      		var cash_box = parsed_result['cash_box'];
+      		var cash_box_keys = Object.keys( cash_box );
+      		for (var i = cash_box_keys.length - 1; i >= 0; i--) {
+      			$('#coin' + cash_box_keys[i]).html( "x" + cash_box[cash_box_keys[i]] );
+      		}
+      		
+      		$('#result').empty();
+      		var coins_set = parsed_result['coins_set'];
+      		if ( coins_set.constructor.name == 'Array') {
+	      		$('#result').append( "You got next coins: " );
+	      		for (var i = coins_set.length - 1; i >= 0; i--) {
+	      			$('#result').append( coins_set[i] + "," );
+	      		}
+	      	} else {
+	      		$('#result').append( coins_set );
+	      	}
+	   		}
+	   	);
+		});
+		$( '.add_one_coin').click(function(){
+			var nominal = parseInt($(this).siblings('.nominal').html());
+			$.post("add_one_coin", { nominal: nominal },
+      	function(result) { 
+      		var parsed_result = jQuery.parseJSON(result);
+      		var cash_box = parsed_result['cash_box'];
+      		var cash_box_keys = Object.keys( cash_box );
+      		for (var i = cash_box_keys.length - 1; i >= 0; i--) {
+      			$('#coin' + cash_box_keys[i]).html( "x" + cash_box[cash_box_keys[i]] );
+      		}
+	   		}
+	   	);
+		});
+		$( '.add_ten_coins').click(function(){
+			var nominal = parseInt($(this).siblings('.nominal').html());
+			$.post("add_ten_coins", { nominal: nominal },
+      	function(result) { 
+      		var parsed_result = jQuery.parseJSON(result);
+      		var cash_box = parsed_result['cash_box'];
+      		var cash_box_keys = Object.keys( cash_box );
+      		for (var i = cash_box_keys.length - 1; i >= 0; i--) {
+      			$('#coin' + cash_box_keys[i]).html( "x" + cash_box[cash_box_keys[i]] );
+      		}
+	   		}
+	   	);
+		});
+  });
+</script>
+
+<div class="row">
+  <div class="col-md-2 col-md-offset-5">
+  	<strong>BANKOMAT</strong>
+  </div>
+</div>
+<div class="row" style="margin-top: 22px;">
+	<% @cash_box.each do |k,v| %>
+		<div class="col-md-2">
+			<div class="nominal">
+				<%= k %>
+			</div>
+			<div id="coin<%= k %>">
+				x<%= v %>
+			</div>
+			<button class="btn-primary add_one_coin">
+				+1
+			</button>
+			<button class="btn-primary add_ten_coins">
+				+10
+			</button>
+		</div>
+	<% end %>
+</div>
+<div class="row" style="margin-top: 22px;">
+	<div class="col-md-2 col-md-offset-3">
+		<strong>Enter sum</strong>
+	</div>
+	<div class="col-md-2">
+		<input type="edit" name="sum">
+	</div>
+	<div class="col-md-2">
+		<button class="btn-primary" id="get_cash">Get!</button>
+	</div>
+</div>
+<div class="row" style="margin-top: 22px;">
+	<div class="col-md-6 col-md-offset-3" id="result">
+	</div>
+</div>
